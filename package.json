@@ -1,0 +1,23 @@
+{
+  "name": "sonicBoom",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "react-scripts": "0.6.1"
+  },
+  "dependencies": {
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "react-google-login-component": "^0.5.2",
+    "react-router": "^3.0.0",
+    "semantic-ui-react": "^0.58.3",
+    "youtube-api": "^2.0.4",
+    "youtube-search": "^1.0.6"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
