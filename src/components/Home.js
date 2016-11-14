@@ -56,12 +56,14 @@ var Home = React.createClass({
                         buttonText="Login With Google"
 
                     />
-                    
+
                     <Link to='/playlists'>
                         <Button style={styles.buttonPadding}>
                             Click Here after accessToken is set
                         </Button>
                     </Link>
+
+
                 </Container>
         )
     }
