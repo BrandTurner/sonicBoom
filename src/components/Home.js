@@ -1,44 +1,68 @@
 var React = require('react');
 var MainContainer = require('./MainContainer');
-import { Grid, Image, Segment } from 'semantic-ui-react';
+import { Grid, Segment } from 'semantic-ui-react';
+import { Container, Button, Icon, Image as ImageComponent, Item, Label } from 'semantic-ui-react'
 import { GoogleLogin } from 'react-google-login-component';
+const { Content, Description, Extra, Group, Header, Image, Meta } = Item
+const paragraph = <ImageComponent src='http://semantic-ui.com/images/wireframe/short-paragraph.png' />
+import * as youtubeApi from '../api/youtubeMusic';
+var Playlist = require('./Playlist')
+var ReactRouter = require('react-router');
+var Link = ReactRouter.Link;
+var styles = require('../styles/');
 
 var Home = React.createClass({
-    handleGoogleResponse: function(googleUser) {
-        var id_token = googleUser.getAuthResponse().id_token;
-        console.log({accessToken: id_token});
-        console.log({User: googleUser});
-        //anything else you want to do(save to localStorage)...
+    contextTypes: {
+        router: React.PropTypes.object.isRequired
     },
+    getInitialState: function() {
+        return {
+            accessToken: ''
+        }
+    },
+    handleUpdateAccessToken: function(accessToken) {
+        this.setState({
+            accessToken: accessToken
+        });
+    },
+    handleGoogleResponse: function(googleUser) {
+        //TODO check to see if logged in
+        this.handleUpdateAccessToken(googleUser.Zi.access_token);
+    },
+    handleGetPlaylist: function() {
+        this.context.router.push({
+            pathname: '/playlists',
+            query: {
+                accessToken: this.state.accessToken
+            }
+        });
+    },
+    handleOAuthClosed: function() {
+
+    },
+    // TODO Refactor and put in it's own component
+    // guide => https://github.com/auth0-blog/react-flux-jwt-authentication-sample
+    // https://github.com/auth0-blog/redux-auth
+    // https://scotch.io/tutorials/build-a-react-flux-app-with-user-authentication
     render: function() {
         return (
-            <MainContainer>
-                <h1>Github Battle</h1>
-                <p>Some fancy motto</p>
+                <Container fluid>
+                    <Header as='h1'> KCRW Playlist App</Header>
 
-                <div id="login-container">This application requires access to your YouTube account.
-                    Please <a href="#" id="login-link">authorize</a> to continue.
-                </div>
+                    <GoogleLogin socialId="520012681222-mnejve8atjj13r6rr0ellm6s1eltpip9.apps.googleusercontent.com"
+                        class="google-login"
+                        scope="profile"
+                        responseHandler={this.handleGoogleResponse}
+                        buttonText="Login With Google"
 
-                <GoogleLogin socialId="520012681222-mnejve8atjj13r6rr0ellm6s1eltpip9.apps.googleusercontent.com"
-                    class="google-login"
-                    scope="profile"
-                    responseHandler={this.handleGoogleResponse}
-                    buttonText="Login With Google"/>
-
-                <Grid stackable columns={2}>
-                    <Grid.Column>
-                        <Segment>
-                            <Image src='http://semantic-ui.com/images/wireframe/paragraph.png' />
-                        </Segment>
-                    </Grid.Column>
-                    <Grid.Column>
-                        <Segment>
-                            <Image src='http://semantic-ui.com/images/wireframe/paragraph.png' />
-                        </Segment>
-                    </Grid.Column>
-                </Grid>
-            </MainContainer>
+                    />
+                    
+                    <Link to='/playlists'>
+                        <Button style={styles.buttonPadding}>
+                            Click Here after accessToken is set
+                        </Button>
+                    </Link>
+                </Container>
         )
     }
 });
