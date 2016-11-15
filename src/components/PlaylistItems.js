@@ -38,7 +38,6 @@ var PlaylistItems = React.createClass({
 PlaylistItems.propTypes = {
     thumbnail:PropTypes.string.isRequired,
     title:PropTypes.string.isRequired,
-    getTracks:PropTypes.func.isRequired,
 };
 
 module.exports = PlaylistItems;

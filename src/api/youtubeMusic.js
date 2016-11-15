@@ -1,5 +1,12 @@
 var axios = require('axios');
 
+function fetch(request, callback) {
+  axios.get(request)
+    .then(response => {
+      callback(response.data);
+    });
+}
+
 function processPlaylist(playlistItems) {
     console.log(playlistItems);
     return (playlistItems.data.items.map(function (playlistItems) {
@@ -25,12 +32,11 @@ var helpers = {
         return axios.get('https://content.googleapis.com/youtube/v3/playlists', meta)
             .then(processPlaylist)
             .then(function (playlistIds) {
-                console.log('16 hours');
                 return(playlistIds);
         });
     },
-    
-    getTracks: function (token, playlistId) {
+
+    getTracks: function (token, playlistId, callback) {
         var meta = {
             headers: {'authorization': 'Bearer ' + token },
             params: {
@@ -43,11 +49,13 @@ var helpers = {
 
         // TODO return array of title, thumbnail objs
         return axios.get('https://content.googleapis.com/youtube/v3/playlists', meta)
-            .then(processPlaylist)
-            .then(function (playlistIds) {
-                console.log('16 hours');
-                return(playlistIds);
-        });
+            .then(response => {
+                callback(response.data);
+            })
+            .then(function (data) {
+                console.log(data);
+                return data;
+            });
     }
 };
 

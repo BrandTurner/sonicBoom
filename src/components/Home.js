@@ -5,13 +5,11 @@ import { Container, Button, Icon, Image as ImageComponent, Item, Label, List } f
 import { GoogleLogin } from 'react-google-login-component';
 const { Content, Description, Extra, Group, Header, Image, Meta } = Item
 const paragraph = <ImageComponent src='http://semantic-ui.com/images/wireframe/short-paragraph.png' />
-import * as youtubeApi from '../api/youtubeMusic';
 var Playlist = require('./Playlist')
 var ReactRouter = require('react-router');
 var Link = ReactRouter.Link;
 var floater = require('../styles/').floater;
 var buttonPadding = require('../styles/').buttonPadding;
-import * as youtubeApi from '../api/youtubeMusis';
 var youtubeApi = require('../api/youtubeMusic');
 
 var Home = React.createClass({
@@ -23,6 +21,8 @@ var Home = React.createClass({
             accessToken: '',
             showPlaylist: false,
             showTracklist: false,
+            playlists: [],
+            tracks: [],
         }
     },
 
@@ -34,7 +34,13 @@ var Home = React.createClass({
     },
     handleGoogleResponse: function(googleUser) {
         //TODO check to see if logged in
-        this.handleUpdateAccessToken(googleUser.Zi.access_token);
+        this.handleUpdateAccessToken(googleUser.Zi.access_token)
+        youtubeApi.getPlaylists(this.state.accessToken)
+                .then(function(data) {
+                    this.setState({
+                        playlists: data,
+                    })
+                }.bind(this));
     },
     handleButtonClick: function() {
         this.setState({
@@ -68,15 +74,10 @@ var Home = React.createClass({
                         </Button>
                     </div>
 
-                    {this.state.showPlaylist ?
-                        <div>
-                            <div className='trackList'>
-                                <Playlist accessToken={this.state.accessToken} getTracks={}/>
-                            </div>
-                        </div>
-                        :
-                        null
-                    }
+                    <div>
+                        <Playlist accessToken={this.state.accessToken} style={floater}/>
+                        <PlaylistItems 
+                    </div>
 
                 </Container>
         )

@@ -17,41 +17,18 @@ var Playlist = React.createClass({
             playlist: [] // empty array that will contain group of playlists
         };
     },
-    getTracks: function() {
-        youtubeApi.getTracks()
-    }
-    componentWillMount: function() {
-        console.log('componentWillMount');
-    },
     componentDidMount: function() {
         // make call to get playlist
         // Refactor => This should not appear until we have determined to be logged in
         var accessToken = this.props.accessToken;
-
-        youtubeApi.getPlaylists(accessToken)
-                .then(function(data) {
-                    this.setState({
-                        playlist: data,
-                    })
-                }.bind(this));
-    },
-    componentDidUpdate: function() {
-            console.log('component updated');
-    },
-    handlePlaylistClick: function(e) {
-        console.log('hello, worlderrrrrr')
-        e.preventDefault();
-        console.log(e.target.value);
     },
     render: function()  {
         const items = this.state.playlist.map((item) =>
-            <div onClick={this.handlePlaylistClick}>
-                <PlaylistItems key={item.playlistId} thumbnail={item.thumbnail} title={item.title} />
-            </div>);
+            <PlaylistItems key={item.playlistId} thumbnail={item.thumbnail} title={item.title} />);
 
         return (
             <div style={Playlist.styles.div}>
-                <ul style={Playlist.styles.ul} onClick={this.handlePlaylistClick}>
+                <ul style={Playlist.styles.ul}>
                     {items}
                 </ul>
             </div>
