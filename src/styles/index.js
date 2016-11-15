@@ -4,6 +4,9 @@ var styles = {
     },
     buttonPadding: {
         marginTop: '15px'
+    },
+    floater: {
+        float: 'left',
     }
 };
 

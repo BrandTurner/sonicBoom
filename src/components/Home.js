@@ -1,7 +1,7 @@
 var React = require('react');
 var MainContainer = require('./MainContainer');
 import { Grid, Segment } from 'semantic-ui-react';
-import { Container, Button, Icon, Image as ImageComponent, Item, Label } from 'semantic-ui-react'
+import { Container, Button, Icon, Image as ImageComponent, Item, Label, List } from 'semantic-ui-react'
 import { GoogleLogin } from 'react-google-login-component';
 const { Content, Description, Extra, Group, Header, Image, Meta } = Item
 const paragraph = <ImageComponent src='http://semantic-ui.com/images/wireframe/short-paragraph.png' />
@@ -9,7 +9,10 @@ import * as youtubeApi from '../api/youtubeMusic';
 var Playlist = require('./Playlist')
 var ReactRouter = require('react-router');
 var Link = ReactRouter.Link;
-var styles = require('../styles/');
+var floater = require('../styles/').floater;
+var buttonPadding = require('../styles/').buttonPadding;
+import * as youtubeApi from '../api/youtubeMusis';
+var youtubeApi = require('../api/youtubeMusic');
 
 var Home = React.createClass({
     contextTypes: {
@@ -17,33 +20,35 @@ var Home = React.createClass({
     },
     getInitialState: function() {
         return {
-            accessToken: ''
+            accessToken: '',
+            showPlaylist: false,
+            showTracklist: false,
         }
     },
+
     handleUpdateAccessToken: function(accessToken) {
         this.setState({
-            accessToken: accessToken
+            accessToken: accessToken,
         });
+        console.log(this.state.accessToken)
     },
     handleGoogleResponse: function(googleUser) {
         //TODO check to see if logged in
         this.handleUpdateAccessToken(googleUser.Zi.access_token);
     },
-    handleGetPlaylist: function() {
-        this.context.router.push({
-            pathname: '/playlists',
-            query: {
-                accessToken: this.state.accessToken
-            }
+    handleButtonClick: function() {
+        this.setState({
+            showPlaylist: true,
         });
     },
-    handleOAuthClosed: function() {
-
+    handleIt: function() {
+        console.log('hello, world');
     },
     // TODO Refactor and put in it's own component
     // guide => https://github.com/auth0-blog/react-flux-jwt-authentication-sample
     // https://github.com/auth0-blog/redux-auth
     // https://scotch.io/tutorials/build-a-react-flux-app-with-user-authentication
+    //TODO header and footet components
     render: function() {
         return (
                 <Container fluid>
@@ -56,15 +61,28 @@ var Home = React.createClass({
                         buttonText="Login With Google"
 
                     />
-                    
-                    <Link to='/playlists'>
-                        <Button style={styles.buttonPadding}>
+
+                    <div>
+                        <Button onClick={this.handleButtonClick} style={buttonPadding}>
                             Click Here after accessToken is set
                         </Button>
-                    </Link>
+                    </div>
+
+                    {this.state.showPlaylist ?
+                        <div>
+                            <div className='trackList'>
+                                <Playlist accessToken={this.state.accessToken} getTracks={}/>
+                            </div>
+                        </div>
+                        :
+                        null
+                    }
+
                 </Container>
         )
     }
 });
+
+
 
 module.exports = Home;
