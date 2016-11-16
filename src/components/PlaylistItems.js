@@ -6,6 +6,12 @@ const paragraph = <ImageComponent src='http://semantic-ui.com/images/wireframe/s
 var youtubeApi = require('../api/youtubeMusic');
 
 var PlaylistItems = React.createClass({
+    getTracks: function() {
+        youtubeApi.getTracks(this.props.accessToken, this.props.playlistId)
+                .then(function(data) {
+                    console.log('googbye');
+                })
+    },
     handlehandlePlaylistClicker: function (e) {
         e.preventDefault();
         console.log('hello, world');
@@ -13,29 +19,33 @@ var PlaylistItems = React.createClass({
     },
     render: function() {
         return (
-            <Group >
-                <Item >
-                    <Image src={this.props.thumbnail}  />
+            <div onClick={this.getTracks}>
+                <Group >
+                    <Item >
+                        <Image src={this.props.thumbnail}  />
 
-                    <Content>
-                        <Header as='a'>{this.props.title}</Header>
-                        <Meta>
-                            <span className='cinema'>Union Square 14</span>
-                        </Meta>
-                        <Description>{paragraph}</Description>
-                        <Extra>
-                            <Label>IMAX</Label>
-                            <Label icon='globe' content='Additional Languages' />
+                        <Content>
+                            <Header as='a'>{this.props.title}</Header>
+                            <Meta>
+                                <span className='cinema'>{this.props.playlistId}</span>
+                            </Meta>
+                            <Description>{paragraph}</Description>
+                            <Extra>
+                                <Label>IMAX</Label>
+                                <Label icon='globe' content='Additional Languages' />
 
-                        </Extra>
-                    </Content>
-                </Item>
-            </Group>
-        )
+                            </Extra>
+                        </Content>
+                    </Item>
+                </Group>
+            </div>
+                )
     }
 })
 
 PlaylistItems.propTypes = {
+    accessToken:PropTypes.string.isRequired,
+    playlistId:PropTypes.string.isRequired,
     thumbnail:PropTypes.string.isRequired,
     title:PropTypes.string.isRequired,
 };

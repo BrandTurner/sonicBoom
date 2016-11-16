@@ -1,16 +1,6 @@
 var React = require('react');
-var MainContainer = require('./MainContainer');
-import { Grid, Segment } from 'semantic-ui-react';
-import { Container, Button, Icon, Image as ImageComponent, Item, Label, List } from 'semantic-ui-react'
+var Playlist = require('./Playlist');
 import { GoogleLogin } from 'react-google-login-component';
-const { Content, Description, Extra, Group, Header, Image, Meta } = Item
-const paragraph = <ImageComponent src='http://semantic-ui.com/images/wireframe/short-paragraph.png' />
-var Playlist = require('./Playlist')
-var ReactRouter = require('react-router');
-var Link = ReactRouter.Link;
-var floater = require('../styles/').floater;
-var buttonPadding = require('../styles/').buttonPadding;
-var youtubeApi = require('../api/youtubeMusic');
 
 var Home = React.createClass({
     contextTypes: {
@@ -19,8 +9,6 @@ var Home = React.createClass({
     getInitialState: function() {
         return {
             accessToken: '',
-            showPlaylist: false,
-            showTracklist: false,
             playlists: [],
             tracks: [],
         }
@@ -37,11 +25,7 @@ var Home = React.createClass({
         this.handleUpdateAccessToken(googleUser.Zi.access_token)
 
     },
-    handleButtonClick: function() {
-        this.setState({
-            showPlaylist: true,
-        });
-    },
+
     handleIt: function() {
         console.log('hello, world');
     },
@@ -52,8 +36,8 @@ var Home = React.createClass({
     //TODO header and footet components
     render: function() {
         return (
-                <Container fluid>
-                    <Header as='h1'> KCRW Playlist App</Header>
+                <div>
+                    <h1> KCRW Playlist App</h1>
 
                     <GoogleLogin socialId="520012681222-mnejve8atjj13r6rr0ellm6s1eltpip9.apps.googleusercontent.com"
                         class="google-login"
@@ -63,17 +47,13 @@ var Home = React.createClass({
 
                     />
 
+                    hello
                     <div>
-                        <Button onClick={this.handleButtonClick} style={buttonPadding}>
-                            Click Here after accessToken is set
-                        </Button>
+                        <Playlist accessToken={this.state.accessToken} />
                     </div>
+                    rar
 
-                    <div>
-                        <Playlist accessToken={this.state.accessToken} style={floater}/>
-                    </div>
-
-                </Container>
+                </div>
         )
     }
 });
