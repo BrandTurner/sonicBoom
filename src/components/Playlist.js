@@ -13,6 +13,7 @@ var Playlist = React.createClass({
     getInitialState: function() {
         console.log('initial state for Playlist');
         return {
+            accessToken:'',
             isLoading: true,
             playlist: [] // empty array that will contain group of playlists
         };
@@ -20,7 +21,13 @@ var Playlist = React.createClass({
     componentDidMount: function() {
         // make call to get playlist
         // Refactor => This should not appear until we have determined to be logged in
-        var accessToken = this.props.accessToken;
+        this.setState({
+            accessToken: this.props.accessToken
+        })
+        if (this.state.accessToken) console.log('hello, world')
+    },
+    componentDidUpdate: function() {
+        console.log('Processing');
     },
     render: function()  {
         const items = this.state.playlist.map((item) =>

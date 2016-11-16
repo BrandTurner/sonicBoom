@@ -35,12 +35,7 @@ var Home = React.createClass({
     handleGoogleResponse: function(googleUser) {
         //TODO check to see if logged in
         this.handleUpdateAccessToken(googleUser.Zi.access_token)
-        youtubeApi.getPlaylists(this.state.accessToken)
-                .then(function(data) {
-                    this.setState({
-                        playlists: data,
-                    })
-                }.bind(this));
+
     },
     handleButtonClick: function() {
         this.setState({
@@ -76,7 +71,6 @@ var Home = React.createClass({
 
                     <div>
                         <Playlist accessToken={this.state.accessToken} style={floater}/>
-                        <PlaylistItems 
                     </div>
 
                 </Container>
