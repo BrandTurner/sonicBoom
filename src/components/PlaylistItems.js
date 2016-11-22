@@ -6,8 +6,15 @@ const paragraph = <ImageComponent src='http://semantic-ui.com/images/wireframe/s
 var youtubeApi = require('../api/youtubeMusic');
 
 var PlaylistItems = React.createClass({
+    getInitialState: function() {
+        console.log('initial state for Playlist');
+        return {
+            isLoading: true,
+            tracks: [] // empty array that will contain group of playlists
+        };
+    },
     getTracks: function() {
-        youtubeApi.getTracks(this.props.accessToken, this.props.playlistId)
+        youtubeApi.getTracks(this.props.accessToken, this.props.playlistId, this.props.processTracks)
                 .then(function(data) {
                     console.log('googbye');
                 })
@@ -48,6 +55,7 @@ PlaylistItems.propTypes = {
     playlistId:PropTypes.string.isRequired,
     thumbnail:PropTypes.string.isRequired,
     title:PropTypes.string.isRequired,
+    processTracks:PropTypes.func.isRequired,
 };
 
 module.exports = PlaylistItems;

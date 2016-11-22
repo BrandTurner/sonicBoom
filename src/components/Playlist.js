@@ -4,6 +4,7 @@ import { Button, Icon, Image as ImageComponent, Item, Label, List } from 'semant
 const { Content, Description, Extra, Group, Header, Image, Meta } = Item
 const paragraph = <ImageComponent src='http://semantic-ui.com/images/wireframe/short-paragraph.png' />
 var PlaylistItems = require('./PlaylistItems');
+var Tracklist = require('./Tracklist');
 var youtubeApi = require('../api/youtubeMusic');
 
 // TODO break up into stateless functional container
@@ -14,8 +15,14 @@ var Playlist = React.createClass({
         console.log('initial state for Playlist');
         return {
             isLoading: true,
-            playlists: [] // empty array that will contain group of playlists
+            playlists: [], // empty array that will contain group of playlists
+            tracks: []
         };
+    },
+    processTracks: function(payload) {
+        this.setState({
+            tracks: payload
+        })
     },
     componentDidMount: function() {
         // make call to get playlist
@@ -41,6 +48,7 @@ var Playlist = React.createClass({
                 thumbnail={item.thumbnail}
                 title={item.title}
                 accessToken={this.props.accessToken}
+                processTracks={this.processTracks}
             />);
 
 
@@ -55,22 +63,8 @@ var Playlist = React.createClass({
                     </ul>
                 </div>
                 <div style={Playlist.styles.list}>
-                    <List divided relaxed>
-                        <List.Item>
-                            <List.Icon name='github' size='large' verticalAlign='middle' />
-                            <List.Content>
-                                <List.Header as='a'>Semantic-Org/Semantic-UI</List.Header>
-                                <List.Description as='a'>Updated 10 mins ago</List.Description>
-                            </List.Content>
-                        </List.Item>
-                        <List.Item>
-                            <List.Icon name='github' size='large' verticalAlign='middle' />
-                            <List.Content>
-                                <List.Header as='a'>Semantic-Org/Semantic-UI</List.Header>
-                                <List.Description as='a'>Updated 10 mins ago</List.Description>
-                            </List.Content>
-                        </List.Item>
-                    </List>
+                    <Tracklist tracks={this.state.tracks} />
+
                 </div>
             </div>
         );

@@ -38,7 +38,7 @@ var helpers = {
         });
     },
 
-    getTracks: function (token, playlistId) {
+    getTracks: function (token, playlistId, callback) {
         var meta = {
             headers: {'authorization': 'Bearer ' + token },
             params: {
@@ -53,7 +53,8 @@ var helpers = {
         return axios.get('https://content.googleapis.com/youtube/v3/playlistItems', meta)
             .then(processTracks)
             .then(function (trackData) {
-                console.log(trackData);
+                console.table(trackData);
+                callback(trackData);
                 return trackData;
             });
     }
