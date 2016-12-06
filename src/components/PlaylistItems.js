@@ -38,7 +38,7 @@ var PlaylistItems = React.createClass({
                             </Meta>
                             <Description>{paragraph}</Description>
                             <Extra>
-                                <Label>IMAX</Label>
+                                <Label>Download</Label>
                                 <Label icon='globe' content='Additional Languages' />
 
                             </Extra>

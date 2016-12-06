@@ -5,6 +5,7 @@ const { Content, Description, Extra, Group, Header, Image, Meta } = Item
 const paragraph = <ImageComponent src='http://semantic-ui.com/images/wireframe/short-paragraph.png' />
 
 var Track = React.createClass({
+
     render: function() {
         return (
             <List divided relaxed>
@@ -12,7 +13,8 @@ var Track = React.createClass({
                     <List.Icon name='github' size='large' verticalAlign='middle' />
                     <List.Content>
                         <List.Header as='a' href={'https://youtube.com/watch?v=' + this.props.videoId}>{this.props.title}</List.Header>
-                        <List.Description as='a'>Updated 10 mins ago</List.Description>
+                        <List.Description as='a' href={'http://localhost:5000/download/' +
+                        this.props.videoId + '?title=' + this.props.title + '&playlist=false'}>Updated 10 mins ago</List.Description>
                     </List.Content>
                 </List.Item>
             </List>

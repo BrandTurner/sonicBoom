@@ -64,7 +64,6 @@ var Playlist = React.createClass({
                 </div>
                 <div style={Playlist.styles.list}>
                     <Tracklist tracks={this.state.tracks} />
-
                 </div>
             </div>
         );
