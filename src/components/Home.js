@@ -1,6 +1,7 @@
 var React = require('react');
 var Playlist = require('./Playlist');
 import { GoogleLogin } from 'react-google-login-component';
+var moment = require('moment');
 
 var Home = React.createClass({
     contextTypes: {
@@ -11,6 +12,7 @@ var Home = React.createClass({
             accessToken: '',
             playlists: [],
             tracks: [],
+            theDate: moment().subtract(1, 'days').format("YYYY/MM/DD")
         }
     },
 
@@ -37,7 +39,7 @@ var Home = React.createClass({
     render: function() {
         return (
                 <div>
-                    <h1> KCRW Playlist App</h1>
+                    <h1> KCRW Playlist App for {this.state.theDate}</h1>
 
                     <GoogleLogin socialId="520012681222-mnejve8atjj13r6rr0ellm6s1eltpip9.apps.googleusercontent.com"
                         class="google-login"
@@ -47,11 +49,10 @@ var Home = React.createClass({
 
                     />
 
-                    hello
                     <div>
                         <Playlist accessToken={this.state.accessToken} />
                     </div>
-                    rar
+
 
                 </div>
         )

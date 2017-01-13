@@ -1,4 +1,5 @@
 var axios = require('axios');
+var moment = require('moment');
 
 function processPlaylist(playlistItems) {
     return (playlistItems.data.items.map(function (playlistItems) {
@@ -18,6 +19,10 @@ function processTracks(tracks) {
             videoId: trackObject.snippet.resourceId.videoId,
         }
     }))
+}
+
+function stupidCallback(payload) {
+    console.table(payload);
 }
 //https://content.googleapis.com/youtube/v3/playlistItems?maxResults=50&part=snippet&playlistId=PLNXQWMqiSM3ANXivcNXdp5At4DDlSmOVN&key=AIzaSyD-a9IF8KKYgoC3cpgS-Al7hLQDbugrDcw
 var helpers = {
@@ -57,7 +62,23 @@ var helpers = {
                 callback(trackData);
                 return trackData;
             });
+    },
+
+    //TODO  Expand function such that you can pass an options object that
+    // specifies when to look/what to look for
+    // eg. by host, by date, by time, etc.
+    // starting with date
+    getKCRWPlaylist(date, callback) {
+        const request = 'https://tracklist-api.kcrw.com/Simulcast/date/' + moment().subtract(1, 'days').format("YYYY/MM/DD");
+
+
+        return axios.get(request)
+            .then(stupidCallback)
+            .then(function(payload) {
+                return payload;
+            })
     }
+
 };
 
 module.exports = helpers;

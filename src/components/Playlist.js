@@ -7,6 +7,7 @@ var PlaylistItems = require('./PlaylistItems');
 var Tracklist = require('./Tracklist');
 var youtubeApi = require('../api/youtubeMusic');
 
+
 // TODO break up into stateless functional container
 //TODO once component mounts, setState Which is the album info
 //TODO Always do render function first!!!!
@@ -40,6 +41,7 @@ var Playlist = React.createClass({
                         console.log(this.state.playlists);
                     }.bind(this));
         }
+        youtubeApi.getKCRWPlaylist('date', 'callback');
     },
     render: function()  {
         const items = this.state.playlists.map((item) =>
