@@ -21,9 +21,45 @@ function processTracks(tracks) {
     }))
 }
 
-function stupidCallback(payload) {
-    console.table(payload);
+function processKCRWTracks(tracks) {
+    return (tracks.data.map(function(trackObject){
+        return {
+            host: trackObject.host,
+            program_title: trackObject.program_title,
+            program_start: trackObject.program_start,
+            program_end: trackObject.program_end,
+            thumbnail: trackObject.albumImage,
+            thumbnailLarge: trackObject.albumImageLarge,
+            artist: trackObject.artist,
+            title: trackObject.title,
+            datetime_played: trackObject.datetime,
+            album: trackObject.album
+        };
+    }));
 }
+
+// Create the XHR object.
+function createCORSRequest(method, url) {
+  var xhr = new XMLHttpRequest();
+  if ("withCredentials" in xhr) {
+    // XHR for Chrome/Firefox/Opera/Safari.
+    xhr.open(method, url, true);
+  } else if (typeof XDomainRequest != "undefined") {
+    // XDomainRequest for IE.
+    xhr = new XDomainRequest();
+    xhr.open(method, url);
+  } else {
+    // CORS not supported.
+    xhr = null;
+  }
+  return xhr;
+}
+
+// Helper method to parse the title tag from the response.
+function getTitle(text) {
+  return text.match('<title>(.*)?</title>')[1];
+}
+
 //https://content.googleapis.com/youtube/v3/playlistItems?maxResults=50&part=snippet&playlistId=PLNXQWMqiSM3ANXivcNXdp5At4DDlSmOVN&key=AIzaSyD-a9IF8KKYgoC3cpgS-Al7hLQDbugrDcw
 var helpers = {
     getPlaylists: function (token) {
@@ -40,7 +76,7 @@ var helpers = {
             .then(processPlaylist)
             .then(function (playlistIds) {
                 return(playlistIds);
-        });
+            });
     },
 
     getTracks: function (token, playlistId, callback) {
@@ -69,15 +105,21 @@ var helpers = {
     // eg. by host, by date, by time, etc.
     // starting with date
     getKCRWPlaylist(date, callback) {
-        const request = 'https://tracklist-api.kcrw.com/Simulcast/date/' + moment().subtract(1, 'days').format("YYYY/MM/DD");
+        var meta = {
+
+        };
+        const fuckCors = 'http://theacademy.ggtv:5000/kcrw' //+  moment().subtract(1, 'days').format("YYYY/MM/DD");
+        //const request = 'https://tracklist-api.kcrw.com/Simulcast/date/' + moment().subtract(1, 'days').format("YYYY/MM/DD");
 
 
-        return axios.get(request)
-            .then(stupidCallback)
+        return axios.get(fuckCors, meta)
+            .then(processKCRWTracks)
             .then(function(payload) {
+                console.table(payload);
+                callback(payload);
                 return payload;
             })
-    }
+    },
 
 };
 

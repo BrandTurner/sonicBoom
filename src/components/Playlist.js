@@ -17,7 +17,8 @@ var Playlist = React.createClass({
         return {
             isLoading: true,
             playlists: [], // empty array that will contain group of playlists
-            tracks: []
+            tracks: [],
+            playlistLoaded: false,
         };
     },
     processTracks: function(payload) {
@@ -28,21 +29,32 @@ var Playlist = React.createClass({
     componentDidMount: function() {
         // make call to get playlist
         // Refactor => This should not appear until we have determined to be logged in
+        this.getLists();
     },
     componentDidUpdate: function() {
+        this.getLists();
     },
     getLists: function() {
+        //TODO clean up
         if (this.props.accessToken != '') {
             youtubeApi.getPlaylists(this.props.accessToken)
                     .then(function(data) {
                         this.setState({
                             playlists: data,
+                            playlistLoaded: true
                         })
-                        console.log(this.state.playlists);
+                        //console.log(this.state.playlists);
                     }.bind(this));
         }
-        youtubeApi.getKCRWPlaylist('date', 'callback');
     },
+    callback: function(data) {
+        console.log(data)
+    },
+
+    getKCRWLists: function() {
+        youtubeApi.getKCRWPlaylist('', this.callback)
+    },
+
     render: function()  {
         const items = this.state.playlists.map((item) =>
             <PlaylistItems key={item.playlistId}
@@ -66,6 +78,14 @@ var Playlist = React.createClass({
                 </div>
                 <div style={Playlist.styles.list}>
                     <Tracklist tracks={this.state.tracks} />
+                </div>
+                <div style={Playlist.styles.div}>
+                    <button onClick={this.getKCRWLists}>
+                        KCRW
+                    </button>
+                    <ul style={Playlist.styles.ul}>
+                        CRAP
+                    </ul>
                 </div>
             </div>
         );

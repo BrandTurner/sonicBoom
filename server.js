@@ -6,6 +6,8 @@ const ytdl = require('ytdl-core');
 const path = require('path');
 const spawn = require('child_process').spawn;
 const ffmpeg = require('fluent-ffmpeg');
+var moment = require('moment');
+const request = require('request');
 
 //TODO - Playlist download strategy
 // https://www.libhive.com/providers/npm/packages/ytdl-core
@@ -13,11 +15,27 @@ const ffmpeg = require('fluent-ffmpeg');
 /* Create an HTTP server to handle responses */
 var app = express();
 
+// CORS SHIT
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 // TODO - get stuff after download, should be title plus the youtube ID
 // TODO - for caching purposes, once new item is downloaded, register in DB
 // using spotify as id of record
 //https://localhost:5000/download/:videoId?playlist=false
 const outputPath = __dirname + '/download/';
+
+app.get('/kcrw', function(req, res) {
+    request('https://tracklist-api.kcrw.com/Simulcast/date/' + moment().subtract(1, 'days').format("YYYY/MM/DD"), function (error, response, body){
+        if (!error && response.statusCode == 200) {
+            res.send(JSON.parse(body));
+            console.log(body);
+        }
+    });
+});
 
 app.get('/download/:videoId', function(request, response) {
 
