@@ -1,5 +1,19 @@
 var axios = require('axios');
 var moment = require('moment');
+// youtube-api
+const Youtube       = require('youtube-api')
+    , readJson      = require('r-json')
+    , Lien          = require('lien')
+    , Logger        = require('bug-killer')
+    , opn           = require('opn')
+    , prettyBytes   = require('pretty-bytes');
+
+var _               = require('underscore');
+var youtube_node    = require('youtube-node');
+
+var youtube = new youtube_node();
+var key = 'AIzaSyDZ0pd6pFiiwuCOfV3nhQBbmRU2VuiDRWA';
+youtube.setKey(key);
 
 function processPlaylist(playlistItems) {
     return (playlistItems.data.items.map(function (playlistItems) {
@@ -36,6 +50,25 @@ function processKCRWTracks(tracks) {
             album: trackObject.album
         };
     }));
+}
+
+function searchYoutubeForKCRW(youtubeObj, trackObject) {
+    youtubeObj.search(trackObject[87].artist + ' ' + trackObject[87].title, 20, function(err, res) {
+        if (err) {
+          console.error(err);
+        } else if (!res.items.length) {
+          console.error('Zero length');
+        } else {
+            console.log('Youtube search successful');
+            console.table(res);
+            var ids = _.map(res.items, function(item) {
+                if (item.id.kind === 'youtube#video') {
+                  return item.id.videoId;
+                }
+              });
+              return ids;
+        }
+    })
 }
 
 // Create the XHR object.
