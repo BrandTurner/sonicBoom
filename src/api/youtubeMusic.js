@@ -1,13 +1,7 @@
 var axios = require('axios');
 var moment = require('moment');
-// youtube-api
-const Youtube       = require('youtube-api')
-    , readJson      = require('r-json')
-    , Lien          = require('lien')
-    , Logger        = require('bug-killer')
-    , opn           = require('opn')
-    , prettyBytes   = require('pretty-bytes');
 
+// youtube-api
 var _               = require('underscore');
 var youtube_node    = require('youtube-node');
 
@@ -52,21 +46,30 @@ function processKCRWTracks(tracks) {
     }));
 }
 
-function searchYoutubeForKCRW(youtubeObj, trackObject) {
-    youtubeObj.search(trackObject[87].artist + ' ' + trackObject[87].title, 20, function(err, res) {
-        if (err) {
-          console.error(err);
-        } else if (!res.items.length) {
-          console.error('Zero length');
-        } else {
-            console.log('Youtube search successful');
-            console.table(res);
-            var ids = _.map(res.items, function(item) {
-                if (item.id.kind === 'youtube#video') {
-                  return item.id.videoId;
+function searchYoutubeForKCRW(trackObject) {
+    var trackObjectSliced = trackObject.slice(0,10)
+    return trackObjectSliced.map(function(kcrwTrack) {
+
+        return  {
+            // TODO change number of results to return to 20 so put into function that gets best result (matches bitrate audio/video)
+            videoIds: youtube.search(kcrwTrack.artist + ' ' + kcrwTrack.title, 1, function(err, res) {
+                if (err) {
+                    console.error(err);
+                } else if (!res.items.length) {
+                    console.error('Zero length');
+                } else {
+                    //console.log('Youtube search successful');
+                    //console.log(res)
+                    //console.log('https://youtube.com/watch?v=' + res.items[0].id.videoId);
+                    return res.items[0].id.videoId
+                    /*var ids = _.map(res.items, function(item) {
+                        if (item.id.kind === 'youtube#video') {
+                          return item.id.videoId;
+                        }
+                      });
+                    return ids;*/
                 }
-              });
-              return ids;
+            }.bind(this))
         }
     })
 }
@@ -148,8 +151,10 @@ var helpers = {
         return axios.get(fuckCors, meta)
             .then(processKCRWTracks)
             .then(function(payload) {
-                console.table(payload);
-                callback(payload);
+                var x = searchYoutubeForKCRW(payload)
+                //console.log(payload);
+                console.log(x);
+                //callback(payload);
                 return payload;
             })
     },
