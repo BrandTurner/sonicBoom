@@ -5,7 +5,7 @@ const { Content, Description, Extra, Group, Header, Image, Meta } = Item
 const paragraph = <ImageComponent src='http://semantic-ui.com/images/wireframe/short-paragraph.png' />
 var PlaylistItems = require('./PlaylistItems');
 var Tracklist = require('./Tracklist');
-var KCRWTracklist = require('./KCRWTracklist')
+var KCRWTracklist = require('./KCRWTracklist');
 var youtubeApi = require('../api/youtubeMusic');
 
 
@@ -72,7 +72,7 @@ var Playlist = React.createClass({
                 processTracks={this.processTracks}
             />);
 
-        const kcrwItems =
+        //const kcrwItems =
 
 
         return (
@@ -89,9 +89,13 @@ var Playlist = React.createClass({
                     <Tracklist tracks={this.state.tracks} />
                 </div>
 
-                <div style={Playlist.styles.list}>
-                    <KCRWTracklist tracks={this.state.tracks} />
+                <div style={Playlist.styles.div}>
+                    <button onClick={this.getKCRWLists}>
+                        KCRW
+                    </button>
                 </div>
+
+
 
 
             </div>

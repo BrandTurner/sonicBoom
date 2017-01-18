@@ -4,6 +4,7 @@ import { Button, Icon, Image as ImageComponent, Item, Label, List } from 'semant
 const { Content, Description, Extra, Group, Header, Image, Meta } = Item
 const paragraph = <ImageComponent src='http://semantic-ui.com/images/wireframe/short-paragraph.png' />
 
+
 var KCRWTrack = React.createClass({
 
     render: function() {

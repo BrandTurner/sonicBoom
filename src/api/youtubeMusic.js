@@ -58,9 +58,9 @@ function searchYoutubeForKCRW(trackObject) {
                 } else if (!res.items.length) {
                     console.error('Zero length');
                 } else {
-                    //console.log('Youtube search successful');
-                    //console.log(res)
-                    //console.log('https://youtube.com/watch?v=' + res.items[0].id.videoId);
+                    console.log('Youtube search successful');
+                    console.log(res)
+                    console.log('https://youtube.com/watch?v=' + res.items[0].id.videoId);
                     return res.items[0].id.videoId
                     /*var ids = _.map(res.items, function(item) {
                         if (item.id.kind === 'youtube#video') {
@@ -144,7 +144,7 @@ var helpers = {
         var meta = {
 
         };
-        const fuckCors = 'http://theacademy.ggtv:5000/kcrw' //+  moment().subtract(1, 'days').format("YYYY/MM/DD");
+        const fuckCors = 'http://localhost:5000/kcrw' //+  moment().subtract(1, 'days').format("YYYY/MM/DD");
         //const request = 'https://tracklist-api.kcrw.com/Simulcast/date/' + moment().subtract(1, 'days').format("YYYY/MM/DD");
 
 
