@@ -5,6 +5,7 @@ const { Content, Description, Extra, Group, Header, Image, Meta } = Item
 const paragraph = <ImageComponent src='http://semantic-ui.com/images/wireframe/short-paragraph.png' />
 var PlaylistItems = require('./PlaylistItems');
 var Tracklist = require('./Tracklist');
+var KCRWTracklist = require('./KCRWTracklist')
 var youtubeApi = require('../api/youtubeMusic');
 
 
@@ -18,12 +19,18 @@ var Playlist = React.createClass({
             isLoading: true,
             playlists: [], // empty array that will contain group of playlists
             tracks: [],
+            kcrwTracks: [],
             playlistLoaded: false,
         };
     },
     processTracks: function(payload) {
         this.setState({
             tracks: payload
+        })
+    },
+    processKCRWTracks: function(payload) {
+        this.setState({
+            kcrwTracks: payload
         })
     },
     componentDidMount: function() {
@@ -65,6 +72,8 @@ var Playlist = React.createClass({
                 processTracks={this.processTracks}
             />);
 
+        const kcrwItems =
+
 
         return (
             <div>
@@ -79,14 +88,12 @@ var Playlist = React.createClass({
                 <div style={Playlist.styles.list}>
                     <Tracklist tracks={this.state.tracks} />
                 </div>
-                <div style={Playlist.styles.div}>
-                    <button onClick={this.getKCRWLists}>
-                        KCRW
-                    </button>
-                    <ul style={Playlist.styles.ul}>
-                        CRAP
-                    </ul>
+
+                <div style={Playlist.styles.list}>
+                    <KCRWTracklist tracks={this.state.tracks} />
                 </div>
+
+
             </div>
         );
     }
