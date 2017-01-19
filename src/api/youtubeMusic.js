@@ -41,62 +41,35 @@ function processKCRWTracks(tracks) {
             artist: trackObject.artist,
             title: trackObject.title,
             datetime_played: trackObject.datetime,
-            album: trackObject.album
+            album: trackObject.album,
+            youtube_link: '',
+            videoId: '',
         };
     }));
 }
 
+
+
 function searchYoutubeForKCRW(trackObject) {
-    var trackObjectSliced = trackObject.slice(0,10)
-    return trackObjectSliced.map(function(kcrwTrack) {
+    //var trackObjectSliced = trackObject.slice(0,10)
+    return (trackObject.map(function(kcrwTrack) {
+        return youtube.search(kcrwTrack.artist + ' ' + kcrwTrack.title, 1, function(err, res) {
+            if (err) {
+                console.error(err);
+            } else if (!res.items.length) {
+                console.error('Zero length');
+            } else {
+                kcrwTrack.videoId       = res.items[0].id.videoId;
+                kcrwTrack.youtube_link  = 'https://youtube.com/watch?v=' + res.items[0].id.videoId;
+                return kcrwTrack;
+            }
+        })
 
-        return  {
-            // TODO change number of results to return to 20 so put into function that gets best result (matches bitrate audio/video)
-            videoIds: youtube.search(kcrwTrack.artist + ' ' + kcrwTrack.title, 1, function(err, res) {
-                if (err) {
-                    console.error(err);
-                } else if (!res.items.length) {
-                    console.error('Zero length');
-                } else {
-                    console.log('Youtube search successful');
-                    console.log(res)
-                    console.log('https://youtube.com/watch?v=' + res.items[0].id.videoId);
-                    return res.items[0].id.videoId
-                    /*var ids = _.map(res.items, function(item) {
-                        if (item.id.kind === 'youtube#video') {
-                          return item.id.videoId;
-                        }
-                      });
-                    return ids;*/
-                }
-            }.bind(this))
-        }
-    })
+    }))
+
 }
 
-// Create the XHR object.
-function createCORSRequest(method, url) {
-  var xhr = new XMLHttpRequest();
-  if ("withCredentials" in xhr) {
-    // XHR for Chrome/Firefox/Opera/Safari.
-    xhr.open(method, url, true);
-  } else if (typeof XDomainRequest != "undefined") {
-    // XDomainRequest for IE.
-    xhr = new XDomainRequest();
-    xhr.open(method, url);
-  } else {
-    // CORS not supported.
-    xhr = null;
-  }
-  return xhr;
-}
 
-// Helper method to parse the title tag from the response.
-function getTitle(text) {
-  return text.match('<title>(.*)?</title>')[1];
-}
-
-//https://content.googleapis.com/youtube/v3/playlistItems?maxResults=50&part=snippet&playlistId=PLNXQWMqiSM3ANXivcNXdp5At4DDlSmOVN&key=AIzaSyD-a9IF8KKYgoC3cpgS-Al7hLQDbugrDcw
 var helpers = {
     getPlaylists: function (token) {
         var meta = {
@@ -150,13 +123,12 @@ var helpers = {
 
         return axios.get(fuckCors, meta)
             .then(processKCRWTracks)
-            .then(function(payload) {
-                var x = searchYoutubeForKCRW(payload)
-                //console.log(payload);
-                console.log(x);
-                //callback(payload);
-                return payload;
+            .then(searchYoutubeForKCRW)
+            .then(function(data) {
+                console.log(data)
+                return data;
             })
+
     },
 
 };

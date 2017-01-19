@@ -6,6 +6,7 @@ const paragraph = <ImageComponent src='http://semantic-ui.com/images/wireframe/s
 var PlaylistItems = require('./PlaylistItems');
 var Tracklist = require('./Tracklist');
 var KCRWTracklist = require('./KCRWTracklist');
+var KCRWTrack = require('./KCRWTrack');
 var youtubeApi = require('../api/youtubeMusic');
 
 
@@ -17,10 +18,11 @@ var Playlist = React.createClass({
         console.log('initial state for Playlist');
         return {
             isLoading: true,
-            playlists: [], // empty array that will contain group of playlists
+            youtubePlaylists: [], // empty array that will contain group of playlists
             tracks: [],
             kcrwTracks: [],
-            playlistLoaded: false,
+            youtubePlaylistsLoaded: false,
+            kcrwPlaylistLoaded: false,
         };
     },
     processTracks: function(payload) {
@@ -47,8 +49,8 @@ var Playlist = React.createClass({
             youtubeApi.getPlaylists(this.props.accessToken)
                     .then(function(data) {
                         this.setState({
-                            playlists: data,
-                            playlistLoaded: true
+                            youtubePlaylists: data,
+                            youtubePlaylistsLoaded: true
                         })
                         //console.log(this.state.playlists);
                     }.bind(this));
@@ -60,19 +62,39 @@ var Playlist = React.createClass({
 
     getKCRWLists: function() {
         youtubeApi.getKCRWPlaylist('', this.callback)
+            .then(function(data) {
+                this.setState({
+                    kcrwTracks: data,
+                    kcrwPlaylistLoaded: true,
+                })
+            }.bind(this))
     },
 
     render: function()  {
-        const items = this.state.playlists.map((item) =>
+        const items = this.state.youtubePlaylists.map((item) =>
             <PlaylistItems key={item.playlistId}
                 playlistId={item.playlistId}
                 thumbnail={item.thumbnail}
                 title={item.title}
                 accessToken={this.props.accessToken}
                 processTracks={this.processTracks}
-            />);
+            />
+        );
 
-        //const kcrwItems =
+
+            const kcrwTracks = this.state.kcrwTracks.map((track) =>
+                <KCRWTrack
+                    album           = {track.album}
+                    artist          = {track.artist}
+                    host            = {track.host}
+                    program_title   = {track.program_title}
+                    thumbnailLarge  = {track.thumbnailLarge}
+                    youtube_link    = {track.youtube_link}
+                    thumbnail       = {track.thumbnail}
+                    title           = {track.title}
+                    videoId         = {track.videoId}
+                />
+            );
 
 
         return (
@@ -94,6 +116,10 @@ var Playlist = React.createClass({
                         KCRW
                     </button>
                 </div>
+                <div style={Playlist.styles.list}>
+                    {kcrwTracks}
+                </div>
+
 
 
 
