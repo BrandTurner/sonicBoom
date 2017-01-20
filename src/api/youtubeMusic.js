@@ -1,11 +1,14 @@
 var axios = require('axios');
 var moment = require('moment');
+var Promise = require('bluebird');
 
 // youtube-api
 var _               = require('underscore');
 var youtube_node    = require('youtube-node');
 
 var youtube = new youtube_node();
+var youtubeSearch = Promise.promisify(youtube.search);
+
 var key = 'AIzaSyDZ0pd6pFiiwuCOfV3nhQBbmRU2VuiDRWA';
 youtube.setKey(key);
 
@@ -41,34 +44,13 @@ function processKCRWTracks(tracks) {
             artist: trackObject.artist,
             title: trackObject.title,
             datetime_played: trackObject.datetime,
+            datetimeString: trackObject.datetime ? moment(trackObject.datetime).format("h:mm:ss MMM D YY") : '',
             album: trackObject.album,
             youtube_link: '',
             videoId: '',
         };
     }));
 }
-
-
-
-function searchYoutubeForKCRW(trackObject) {
-    //var trackObjectSliced = trackObject.slice(0,10)
-    return (trackObject.map(function(kcrwTrack) {
-        return youtube.search(kcrwTrack.artist + ' ' + kcrwTrack.title, 1, function(err, res) {
-            if (err) {
-                console.error(err);
-            } else if (!res.items.length) {
-                console.error('Zero length');
-            } else {
-                kcrwTrack.videoId       = res.items[0].id.videoId;
-                kcrwTrack.youtube_link  = 'https://youtube.com/watch?v=' + res.items[0].id.videoId;
-                return kcrwTrack;
-            }
-        })
-
-    }))
-
-}
-
 
 var helpers = {
     getPlaylists: function (token) {
@@ -123,13 +105,49 @@ var helpers = {
 
         return axios.get(fuckCors, meta)
             .then(processKCRWTracks)
-            .then(searchYoutubeForKCRW)
-            .then(function(data) {
-                console.log(data)
-                return data;
-            })
+            .then(function(kcrwTracks) {
+                return kcrwTracks;
+            });
 
     },
+    searchYoutubeForKCRW(trackObject) {
+        var promises = (trackObject.map(function(kcrwTrack) {
+                return youtubeSearch(kcrwTrack.artist + ' ' + kcrwTrack.title, 1)
+                        .then(function(res) {
+                            kcrwTrack.videoId       = res.items[0].id.videoId;
+                            kcrwTrack.youtube_link  = 'https://youtube.com/watch?v=' + res.items[0].id.videoId;
+
+                            return kcrwTrack;
+                        })
+                        .then(function(result) {
+                            return result;
+                        })
+                        .catch(function(error) {
+                            console.log('ERROR:');
+                        })
+
+            })
+        )
+        return Promise.all(promises);
+    },
+    createPlaylist(token,name, description) {
+        var meta = {
+            headers: {'authorization': 'Bearer ' + token },
+            params: {
+                alt: 'json',
+                part: 'snippet,status',
+                key: key
+            }
+        };
+
+        return axios.post('https://content.googleapis.com/youtube/v3/playlists',{snippet: {title: "Just got Pizza", description: "needed it"}, status: {privacyStatus: "private"}}, meta)
+            .then(function(response) {
+                console.log(response);
+                return(response);
+            });
+    },
+
+
 
 };
 

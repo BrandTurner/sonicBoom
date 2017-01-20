@@ -11,12 +11,12 @@ var KCRWTrack = React.createClass({
         return (
             <List divided relaxed>
                 <List.Item>
-                    <List.Icon name='github' size='large' verticalAlign='middle' />
+                    <Image src={this.props.thumbnail} size='tiny' verticalAlign='middle' />
                     <List.Content>
-                        <List.Header as='a' href={'https://youtube.com/watch?v=' + this.props.videoId}>{this.props.title}</List.Header>
-                        <List.Header>{this.props.youtube_link} The link</List.Header>
-                        <List.Description as='a' href={'http://localhost:5000/download/' +
-                        this.props.videoId + '?title=' + this.props.title + '&playlist=false'}>Updated 10 mins ago</List.Description>
+                        <List.Header>{this.props.title}</List.Header>
+                        <List.Header>{this.props.artist}</List.Header>
+                        <List.Description>{this.props.album}</List.Description>
+                        <List.Description>{this.props.program_title} @ {this.props.datetimeString}</List.Description>
                     </List.Content>
                 </List.Item>
             </List>
@@ -31,10 +31,11 @@ KCRWTrack.propTypes = {
     program_title: PropTypes.string,
     thumbnailLarge: PropTypes.string,
     youtube_link: PropTypes.string,
+    videoId: PropTypes.string,
+    datetimeString: PropTypes.string,
 
-    thumbnail: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    videoId: PropTypes.string.isRequired,
+    thumbnail: PropTypes.string,
+    title: PropTypes.string
 };
 
 module.exports = KCRWTrack;

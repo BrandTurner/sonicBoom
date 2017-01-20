@@ -21,6 +21,7 @@ var Playlist = React.createClass({
             youtubePlaylists: [], // empty array that will contain group of playlists
             tracks: [],
             kcrwTracks: [],
+            kcrwTracksOnYoutube: [],
             youtubePlaylistsLoaded: false,
             kcrwPlaylistLoaded: false,
         };
@@ -42,6 +43,7 @@ var Playlist = React.createClass({
     },
     componentDidUpdate: function() {
         this.getLists();
+        this.addKCRWTracksToYoutube();
     },
     getLists: function() {
         //TODO clean up
@@ -50,9 +52,7 @@ var Playlist = React.createClass({
                     .then(function(data) {
                         this.setState({
                             youtubePlaylists: data,
-                            youtubePlaylistsLoaded: true
                         })
-                        //console.log(this.state.playlists);
                     }.bind(this));
         }
     },
@@ -60,14 +60,30 @@ var Playlist = React.createClass({
         console.log(data)
     },
 
-    getKCRWLists: function() {
+    getKCRWPlaylist: function() {
         youtubeApi.getKCRWPlaylist('', this.callback)
             .then(function(data) {
                 this.setState({
                     kcrwTracks: data,
-                    kcrwPlaylistLoaded: true,
                 })
+                console.log(data)
             }.bind(this))
+    },
+
+    createYoutubePlaylist: function() {
+        youtubeApi.createPlaylist(this.props.accessToken,'rar','arrrr')
+            .then(function(data) {
+                console.log(data);
+            })
+    },
+
+    addKCRWTracksToYoutube: function() {
+        if (this.state.kcrwTracks) {
+            youtubeApi.searchYoutubeForKCRW(this.state.kcrwTracks)
+                .then(function(data){
+                    console.log(data);
+                });
+        }
     },
 
     render: function()  {
@@ -80,8 +96,9 @@ var Playlist = React.createClass({
                 processTracks={this.processTracks}
             />
         );
-
-
+            // Make exception for breaks
+            // Handle no thumbnails
+            // generate unique ID
             const kcrwTracks = this.state.kcrwTracks.map((track) =>
                 <KCRWTrack
                     album           = {track.album}
@@ -93,12 +110,15 @@ var Playlist = React.createClass({
                     thumbnail       = {track.thumbnail}
                     title           = {track.title}
                     videoId         = {track.videoId}
+                    datetimeString  = {track.datetimeString}
                 />
             );
 
 
         return (
             <div>
+
+
                 <div style={Playlist.styles.div}>
                     <button onClick={this.getLists}>
                         Frack
@@ -112,13 +132,20 @@ var Playlist = React.createClass({
                 </div>
 
                 <div style={Playlist.styles.div}>
-                    <button onClick={this.getKCRWLists}>
+                    <button onClick={this.getKCRWPlaylist}>
                         KCRW
                     </button>
+                    <ul style={Playlist.styles.ul}>
+                        {kcrwTracks}
+                    </ul>
                 </div>
-                <div style={Playlist.styles.list}>
-                    {kcrwTracks}
+
+                <div style={Playlist.styles.div}>
+                    <button onClick={this.createYoutubePlaylist}>
+                        Make YT
+                    </button>
                 </div>
+
 
 
 
