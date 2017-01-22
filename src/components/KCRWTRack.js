@@ -24,6 +24,7 @@ var KCRWTrack = React.createClass({
     }
 })
 
+
 KCRWTrack.propTypes = {
     album: PropTypes.string,
     artist: PropTypes.string,

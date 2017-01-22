@@ -31,11 +31,6 @@ var Playlist = React.createClass({
             tracks: payload
         })
     },
-    processKCRWTracks: function(payload) {
-        this.setState({
-            kcrwTracks: payload
-        })
-    },
     componentDidMount: function() {
         // make call to get playlist
         // Refactor => This should not appear until we have determined to be logged in
@@ -43,7 +38,6 @@ var Playlist = React.createClass({
     },
     componentDidUpdate: function() {
         this.getLists();
-        this.addKCRWTracksToYoutube();
     },
     getLists: function() {
         //TODO clean up
@@ -66,23 +60,18 @@ var Playlist = React.createClass({
                 this.setState({
                     kcrwTracks: data,
                 })
-                console.log(data)
             }.bind(this))
-    },
 
-    createYoutubePlaylist: function() {
-        youtubeApi.createPlaylist(this.props.accessToken,'rar','arrrr')
-            .then(function(data) {
-                console.log(data);
-            })
     },
-
     addKCRWTracksToYoutube: function() {
         if (this.state.kcrwTracks) {
             youtubeApi.searchYoutubeForKCRW(this.state.kcrwTracks)
                 .then(function(data){
+                    this.setState({
+                        kcrwTracksOnYoutube: data,
+                    })
                     console.log(data);
-                });
+                }.bind(this));
         }
     },
 
@@ -135,22 +124,13 @@ var Playlist = React.createClass({
                     <button onClick={this.getKCRWPlaylist}>
                         KCRW
                     </button>
+                    <button onClick={this.addKCRWTracksToYoutube}>
+                        Youtube
+                    </button>
                     <ul style={Playlist.styles.ul}>
                         {kcrwTracks}
                     </ul>
                 </div>
-
-                <div style={Playlist.styles.div}>
-                    <button onClick={this.createYoutubePlaylist}>
-                        Make YT
-                    </button>
-                </div>
-
-
-
-
-
-
             </div>
         );
     }

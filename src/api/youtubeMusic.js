@@ -111,22 +111,27 @@ var helpers = {
 
     },
     searchYoutubeForKCRW(trackObject) {
-        var promises = (trackObject.map(function(kcrwTrack) {
-                return youtubeSearch(kcrwTrack.artist + ' ' + kcrwTrack.title, 1)
-                        .then(function(res) {
-                            kcrwTrack.videoId       = res.items[0].id.videoId;
-                            kcrwTrack.youtube_link  = 'https://youtube.com/watch?v=' + res.items[0].id.videoId;
+        var promises = (trackObject.filter((kcrwTrack) => kcrwTrack.artist != "[BREAK]")
+                .map(function(kcrwTrack) {
+                    return (youtubeSearch(kcrwTrack.artist + ' ' + kcrwTrack.title, 1)
+                            .then(function(res) {
+                                if (res.items[0] && res.items[0].id) {
+                                    kcrwTrack.videoId       = res.items[0].id.videoId;
+                                    kcrwTrack.youtube_link  = 'https://youtube.com/watch?v=' + res.items[0].id.videoId;
 
-                            return kcrwTrack;
-                        })
-                        .then(function(result) {
-                            return result;
-                        })
-                        .catch(function(error) {
-                            console.log('ERROR:');
-                        })
+                                    return Promise.resolve(kcrwTrack);
+                                } else {
+                                    kcrwTrack.videoId = 'Not found';
+                                    return Promise.resolve(kcrwTrack);
+                                }
+                            })
+                            .catch(function(error) {
+                                console.log('ERROR:');
+                                return Promise.reject(error);
+                            })
+                        )
 
-            })
+                })
         )
         return Promise.all(promises);
     },
