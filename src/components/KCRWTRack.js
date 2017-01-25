@@ -13,7 +13,8 @@ var KCRWTrack = React.createClass({
                 <List.Item>
                     <Image src={this.props.thumbnail} size='tiny' verticalAlign='middle' />
                     <List.Content>
-                        <List.Header>{this.props.title}</List.Header>
+                        <List.Header as='a' href={'http://localhost:5000/api/download/' + this.props.videoId
+                        + '?title=' + this.props.title + '&playlist=false'}>{this.props.title}</List.Header>
                         <List.Header>{this.props.artist}</List.Header>
                         <List.Description>{this.props.album}</List.Description>
                         <List.Description>{this.props.program_title} @ {this.props.datetimeString}</List.Description>

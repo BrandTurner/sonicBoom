@@ -88,7 +88,7 @@ var Playlist = React.createClass({
             // Make exception for breaks
             // Handle no thumbnails
             // generate unique ID
-            const kcrwTracks = this.state.kcrwTracks.map((track) =>
+            const kcrwTracks = this.state.kcrwTracksOnYoutube.map((track) =>
                 <KCRWTrack
                     album           = {track.album}
                     artist          = {track.artist}

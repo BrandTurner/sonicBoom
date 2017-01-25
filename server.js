@@ -37,17 +37,70 @@ app.get('/kcrw', function(req, res) {
     });
 });
 
-app.get('/download/:videoId', function(request, response) {
+//TODO create cfg file with paths set there
+
+app.get('/api/download/:videoId', function(request, response) {
 
     const isPlaylist = request.query.playlist || '';
     const title = request.query.title || '';
     const youtubeLink = 'https://youtube.com/watch?v=' + request.params.videoId;
-    const audioOutput = outputPath + title + '.mp4';
+    const audioOutput = outputPath + title;
 
     var url = youtubeLink;
+    var output = audioOutput;
 
 
-ytdl(url, { filter: function(f) {
+    var video = ytdl(url, {filter: 'audioonly'});
+    console.log(video);
+    video.pipe(fs.createWriteStream(output));
+    video.on('response', function(res) {
+      var totalSize = res.headers['content-length'];
+      var dataRead = 0;
+
+      res.on('data', function(data) {
+        dataRead += data.length;
+        var percent = dataRead / totalSize;
+        process.stdout.cursorTo(0);
+        process.stdout.clearLine(1);
+        process.stdout.write((percent * 100).toFixed(2) + '% ');
+      });
+      res.on('end', function() {
+        process.stdout.write('\n');
+        response.writeHead(204);
+
+        response.end();
+      });
+    });
+
+//TODO Figure out best method to download...generate url for d/l???
+
+/*
+    var url = youtubeLink;
+    var videoUrl = url;
+    var destDir = audioOutput;
+
+    var videoReadableStream = ytdl(videoUrl, {filter: 'audioonly'});
+    ytdl.getInfo(videoUrl, function(err, info) {
+
+        destDir = destDir + '.' +  info.container;
+        var videoName = info.title.replace('|', '').toString('ascii');
+        var videoWritableStream = fs.createWriteStream(destDir);
+        var stream = videoReadableStream.pipe(videoWritableStream);
+
+        // Do I need to close the file?
+        stream.on('finish', function() {
+
+            response.writeHead(204);
+
+            response.end();
+        })
+
+
+
+    })
+    */
+
+/*ytdl(url, { filter: function(f) {
   return f.container === 'mp4' && !f.encoding ; } })
   // get audio bitrate 160 || 128
   // Write audio to file since ffmpeg supports only one input stream.
@@ -72,7 +125,7 @@ ytdl(url, { filter: function(f) {
         console.log('done');
         response.download(path.resolve(__dirname, 'outputnew.mp4'))
       });
-  });
+  });*/
 });
 
 app.listen(5000);
