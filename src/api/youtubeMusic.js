@@ -12,6 +12,8 @@ var youtubeSearch = Promise.promisify(youtube.search);
 var key = 'AIzaSyDZ0pd6pFiiwuCOfV3nhQBbmRU2VuiDRWA';
 youtube.setKey(key);
 
+
+
 function processPlaylist(playlistItems) {
     return (playlistItems.data.items.map(function (playlistItems) {
         return {
@@ -111,7 +113,7 @@ var helpers = {
 
     },
     searchYoutubeForKCRW(trackObject) {
-        var promises = (trackObject.filter((kcrwTrack) => kcrwTrack.artist != "[BREAK]")
+        var promises = (trackObject.filter((kcrwTrack) => kcrwTrack.artist !== "[BREAK]")
                 .map(function(kcrwTrack) {
                     return (youtubeSearch(kcrwTrack.artist + ' ' + kcrwTrack.title, 1)
                             .then(function(res) {
@@ -121,7 +123,7 @@ var helpers = {
 
                                     return Promise.resolve(kcrwTrack);
                                 } else {
-                                    kcrwTrack.videoId = 'Not found';
+                                    kcrwTrack.videoId = 'not found';
                                     return Promise.resolve(kcrwTrack);
                                 }
                             })
@@ -135,7 +137,7 @@ var helpers = {
         )
         return Promise.all(promises);
     },
-    createPlaylist(token,name, description) {
+    createYoutubePlaylist(token,name, description) {
         var meta = {
             headers: {'authorization': 'Bearer ' + token },
             params: {
@@ -145,12 +147,46 @@ var helpers = {
             }
         };
 
-        return axios.post('https://content.googleapis.com/youtube/v3/playlists',{snippet: {title: "Just got Pizza", description: "needed it"}, status: {privacyStatus: "private"}}, meta)
+        return axios.post('https://content.googleapis.com/youtube/v3/playlists',
+            {snippet: {title: "KCRW Playlist for " + moment().subtract(1, 'days').format("YYYY/MM/DD"), description: "needed it"},
+            status: {privacyStatus: "public"}}, meta)
             .then(function(response) {
-                console.log(response);
                 return(response);
             });
     },
+    addToYoutubePlaylist(token, playlistId, videoId) {
+        const meta = {
+            headers: {'authorization': 'Bearer ' + token },
+            params: {
+                alt: 'json',
+                part: 'snippet',
+                key: key
+            }
+        };
+
+        const details = {
+            videoId: videoId,
+            kind:   'youtube#video'
+        };
+
+        return axios.post('https://content.googleapis.com/youtube/v3/playlistItems',
+            {
+                snippet: {
+                    playlistId: playlistId,
+                    resourceId: details
+                }
+            }, meta)
+            .then(function(response) {
+                return(response);
+            });
+    },
+
+    // Spotify
+    getSpotifyTrack: function (artist, title) {
+      const request = `https://api.spotify.com/v1/search?q=${artist}%20${title}&type=track`;
+      return axios.get(request);
+  },
+
 
 
 
