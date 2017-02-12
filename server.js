@@ -47,7 +47,7 @@ app.use(function(req, res, next) {
 const outputPath = __dirname + '/download/';
 
 app.get('/kcrw', function(req, res) {
-    request('https://tracklist-api.kcrw.com/Simulcast/date/' + moment().subtract(1, 'days').format("YYYY/MM/DD"), function (error, response, body){
+    request('https://tracklist-api.kcrw.com/Simulcast/date/' + moment().subtract(2, 'days').format("YYYY/MM/DD"), function (error, response, body){
         if (!error && response.statusCode == 200) {
             res.send(JSON.parse(body));
             console.log(body);
@@ -174,30 +174,24 @@ app.get('/callback', (req, res) => {
     res.clearCookie(STATE_KEY);
     // Retrieve an access token and a refresh token
     spotifyApi.authorizationCodeGrant(code).then(data => {
-      const { expires_in, access_token, refresh_token } = data.body;
+        const { expires_in, access_token, refresh_token } = data.body;
 
       // Set the access token on the API object to use it in later calls
-      spotifyApi.setAccessToken(access_token);
-      spotifyApi.setRefreshToken(refresh_token);
+        spotifyApi.setAccessToken(access_token);
+        spotifyApi.setRefreshToken(refresh_token);
 
       // use the access token to access the Spotify Web API
-     /* spotifyApi.getMe().then(({ body }) => {
-        console.log(body);
-    });*/
 
-      spotifyApi.getUserPlaylists('brandturner84')
-        .then(({body}) => {
-            console.log(body);
-        })
 
-         spotifyApi.getMe().then(({ body }) => {
-           console.log(body);
-       });
+
+
+
+
       // we can also pass the token to the browser to make requests from there
-      //res.send(`/#/user/${access_token}/${refresh_token}`);
-      //res.send(body);
-      res.send('Access Token: ' + access_token + '\n\n'+ 'Refresh Token: ' + refresh_token);
+      res.redirect(`http://localhost:3000/#/user/${access_token}/${refresh_token}`);
+
     }).catch(err => {
+        //TODO create error route
       res.send('/#/error/invalid token');
     });
  // }

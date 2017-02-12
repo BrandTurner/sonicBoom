@@ -2,6 +2,7 @@ var React = require('react');
 var PropTypes = React.PropTypes;
 import { Button, Icon, Image as ImageComponent, Item, Label, List } from 'semantic-ui-react'
 const { Content, Description, Extra, Group, Header, Image, Meta } = Item
+var Link = require('react-router').Link;
 const paragraph = <ImageComponent src='http://semantic-ui.com/images/wireframe/short-paragraph.png' />
 var PlaylistItems = require('./PlaylistItems');
 var Tracklist = require('./Tracklist');
@@ -26,6 +27,8 @@ var Playlist = React.createClass({
             kcrwPlaylistLoaded: false,
             youtubePlaylistId: '',
             counter:0,
+            showSpotifyLogin: true,
+            spotifyId: '',
         };
     },
     processTracks: function(payload) {
@@ -34,9 +37,16 @@ var Playlist = React.createClass({
         })
     },
     componentDidMount: function() {
-        // make call to get playlist
-        // Refactor => This should not appear until we have determined to be logged in
-        this.getLists();
+        if (this.props.routeParams) {
+            spotifyApi.setAccessToken(this.props.routeParams.spotifyAccessToken)
+            spotifyApi.getMe()
+                .then(function(data) {
+                    this.setState({
+                        spotifyId: data.id,
+                        showSpotifyLogin: false,
+                    })
+                }.bind(this));
+        }
     },
     componentDidUpdate: function() {
         //this.getLists();
@@ -112,6 +122,8 @@ var Playlist = React.createClass({
         }.bind(this), 3000);
     },
     spotifyTest: function() {
+        console.log('Access ', this.props.routeParams.spotifyAccessToken);
+        console.log('Refresh ', this.props.routeParams.spotifyRefreshToken);
         this.spotifySearch()
             .then(function(data) {
                 this.setState({
@@ -137,6 +149,8 @@ var Playlist = React.createClass({
                                     }
                                 }, (err) => {
                                     console.error(err);
+                                    kcrwTrack.spotifyId = null;
+                                    return kcrwTrack;
                                 })
                         )
                     })
@@ -147,12 +161,43 @@ var Playlist = React.createClass({
         //spotifyApi.searchSpotify('Michael Jackson', 'Smooth Criminal')
     },
     reduceSpotify: function() {
+        let count = 0;
+        const promiseFor = Promise.method(function(condition, action, value) {
+            if (!condition(value)) return value;
+            return action(value).then(promiseFor.bind(null, condition, action));
+        });
+
         var arr = this.state.kcrwTracks.filter((kcrwTrack) => kcrwTrack.spotifyId !== null)
             .map(function(track) {
-                return track.spotifyId
+                return 'spotify:track:' + track.spotifyId
             })
-        console.log(arr)
 
+        var spotifyTracks = this.createChunkedArray(arr.reverse(), 100);
+        console.log(spotifyTracks);
+
+
+        promiseFor(function(count) {
+            return count < spotifyTracks.length
+        }, function(count) {
+            return spotifyApi.createPlaylist(this.state.spotifyId, {name: 'KCRW Playlist Hellz YEAH'})
+                .then(function(data){
+                    //data.id
+                    console.log('Playlist ID: ', data.id);;
+                    console.log('My Id', this.state.spotifyId);
+                    console.log('spotifyTracks', spotifyTracks);
+                    return spotifyApi.addTracksToPlaylist(this.state.spotifyId, data.id, spotifyTracks[count]);
+                }.bind(this))
+                .then(function(data){
+                    console.log(data);
+                    return ++count;
+                });
+        }.bind(this), 0).then(console.log.bind(console,'all done'))
+    },
+
+    createChunkedArray: function(spotifyTracks, chunkSize) {
+        let chunkedTracks = [];
+        while(spotifyTracks.length > 0) chunkedTracks.push(spotifyTracks.splice(0, chunkSize));
+        return chunkedTracks;
     },
 
     render: function()  {
@@ -189,21 +234,49 @@ var Playlist = React.createClass({
 
 
                 <div style={Playlist.styles.div}>
-                    <button onClick={this.getLists}>
-                        Login to Google
-                    </button>
-                    <button onClick={this.createYtPlaylistDelay}>
-                        Create Youtube Playlist
-                    </button>
-                    <button onClick={this.spotifyTest}>
+                    {this.state.showSpotifyLogin &&
+                        <a href='http://localhost:5000/login'>
+                            <button>
+                                Login to Spotify
+                            </button>
+                        </a>
+                    }
+                    {!this.state.showSpotifyLogin &&
+                        <div>
+                            <button onClick={this.spotifyTest}>
+                                Spotify
+                            </button>
+                            <button onClick={this.reduceSpotify}>
+                                Reduce
+                            </button>
+                        </div>
+                            }
+                    {/*
+                        <a href='http://localhost:5000/login'>
+                        <button onClick={this.getLists}>
+                            Login to Spotify
+                        </button>
+                        </a>
+                        <button onClick={this.spotifyTest}>
                         Spotify
-                    </button>
-                    <button onClick={this.reduceSpotify}>
+                        </button>
+
+                            <button onClick={this.getLists}>
+                        Login to Google
+                        </button>
+                        <button onClick={this.createYtPlaylistDelay}>
+                        Create Youtube Playlist
+                        </button>
+                        <button onClick={this.spotifyTest}>
+                        Spotify
+                        </button>
+                        <button onClick={this.reduceSpotify}>
                         Reduce
-                    </button>
+                        </button>
                     <ul style={Playlist.styles.ul}>
                         {items}
                     </ul>
+                */}
                 </div>
                 <div style={Playlist.styles.list}>
                     <Tracklist tracks={this.state.tracks} />
@@ -243,7 +316,7 @@ Playlist.styles = {
 };
 
 Playlist.propTypes = {
-    accessToken: PropTypes.string.isRequired
+    accessToken: PropTypes.string
 };
 
 module.exports = Playlist;
