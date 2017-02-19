@@ -1213,6 +1213,12 @@ caniuse-db@^1.0.30000525, caniuse-db@^1.0.30000527:
   version "1.0.30000560"
   resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000560.tgz#7f886302e912d15a6e53b81d6ab13de9dba95ee8"
 
+canvas@~1.2.0:
+  version "1.2.11"
+  resolved "https://registry.yarnpkg.com/canvas/-/canvas-1.2.11.tgz#d12455864df5169c2a2be602fa8e0e4013a97140"
+  dependencies:
+    nan "^2.0.9"
+
 cardinal@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/cardinal/-/cardinal-1.0.0.tgz#50e21c1b0aa37729f9377def196b5a9cec932ee9"
@@ -1392,6 +1398,12 @@ color-string@^0.3.0:
   resolved "https://registry.yarnpkg.com/color-string/-/color-string-0.3.0.tgz#27d46fb67025c5c2fa25993bfbf579e47841b991"
   dependencies:
     color-name "^1.0.0"
+
+color-thief@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/color-thief/-/color-thief-2.2.2.tgz#775e99a50f195b198f844b94b3f6c38deb1ca424"
+  dependencies:
+    canvas "~1.2.0"
 
 color@^0.11.0:
   version "0.11.3"
@@ -4130,7 +4142,7 @@ mute-stream@0.0.5, mute-stream@~0.0.4:
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.5.tgz#8fbfabb0a98a253d3184331f9e8deb7372fac6c0"
 
-nan@^2.3.0:
+nan@^2.0.9, nan@^2.3.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.4.0.tgz#fb3c59d45fe4effe215f0b890f8adf6eb32d2232"
 

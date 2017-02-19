@@ -173,25 +173,37 @@ var Playlist = React.createClass({
             })
 
         var spotifyTracks = this.createChunkedArray(arr.reverse(), 100);
-        console.log(spotifyTracks);
 
-
-        promiseFor(function(count) {
-            return count < spotifyTracks.length
-        }, function(count) {
-            return spotifyApi.createPlaylist(this.state.spotifyId, {name: 'KCRW Playlist Hellz YEAH'})
-                .then(function(data){
-                    //data.id
-                    console.log('Playlist ID: ', data.id);;
-                    console.log('My Id', this.state.spotifyId);
-                    console.log('spotifyTracks', spotifyTracks);
-                    return spotifyApi.addTracksToPlaylist(this.state.spotifyId, data.id, spotifyTracks[count]);
-                }.bind(this))
-                .then(function(data){
-                    console.log(data);
-                    return ++count;
-                });
-        }.bind(this), 0).then(console.log.bind(console,'all done'))
+        // TODO clean up. Current code creates multiple playlists.
+        // Create one playlist, then multiple add Tracks - for now just enger first 100
+        spotifyApi.createPlaylist(this.state.spotifyId, {name: 'KCRW Playlist Hellz YEAH'})
+            .then(function(data){
+                //data.id
+                console.log('Playlist ID: ', data.id);;
+                console.log('My Id', this.state.spotifyId);
+                console.log('spotifyTracks', spotifyTracks);
+                return spotifyApi.addTracksToPlaylist(this.state.spotifyId, data.id, spotifyTracks[0]);
+            }.bind(this))
+        // TODO clean up. Current code creates multiple playlists.
+        // Create one playlist, then multiple add Tracks
+        {/*
+            promiseFor(function(count) {
+                return count < spotifyTracks.length
+            }, function(count) {
+                return spotifyApi.createPlaylist(this.state.spotifyId, {name: 'KCRW Playlist Hellz YEAH'})
+                    .then(function(data){
+                        //data.id
+                        console.log('Playlist ID: ', data.id);;
+                        console.log('My Id', this.state.spotifyId);
+                        console.log('spotifyTracks', spotifyTracks);
+                        return spotifyApi.addTracksToPlaylist(this.state.spotifyId, data.id, spotifyTracks[count]);
+                    }.bind(this))
+                    .then(function(data){
+                        console.log(data);
+                        return ++count;
+                    });
+            }.bind(this), 0).then(console.log.bind(console,'all done'))*/
+        }
     },
 
     createChunkedArray: function(spotifyTracks, chunkSize) {
